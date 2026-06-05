@@ -37,9 +37,11 @@ This project requires an environment file (`.env`) to run.
 After installing and configuring `.env`, you can run the bot with:
 
 - **Start the bot**:
+   Double click on start.bat to start or run command below in project folder
   ```bash
   npm start
   ```
+
 
 # Auto-Quest-Discord HƯỚNG DẪN BẢN TIẾNG VIỆT
 
@@ -80,6 +82,7 @@ Dự án yêu cầu một file biến môi trường (`.env`) để hoạt độ
 Sau khi cài đặt xong và đã cấu hình `.env`, bạn có thể chạy bot bằng các lệnh sau:
 
 - **Chạy bot**:
+   Đúp chuột vào start.bat để chạy hoặc chạy lệnh phía dưới ở thư mục dự án
   ```bash
   npm start
   ```
