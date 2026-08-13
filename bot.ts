@@ -143,6 +143,60 @@ function getQuestData(quest: Quest): {
 	return { name, duration, reward };
 }
 
+function getQuestTaskType(quest: Quest): string {
+	const taskConfig = quest.config?.task_config ?? quest.config?.task_config_v2;
+	const tasks = taskConfig?.tasks;
+	return tasks ? Object.keys(tasks)[0] ?? 'UNKNOWN' : 'NO_TASK_CONFIG';
+}
+
+function printQuestFetchSummary(manager: NonNullable<ClientQuest['questManager']>) {
+	const allQuests = manager.list();
+	const excludedQuests = client.lastQuestsResponse?.excluded_quests ?? [];
+
+	console.log(
+		chalk.gray(
+			`Fetched ${allQuests.length} quests, ${excludedQuests.length} excluded quests.`,
+		),
+	);
+
+	if (allQuests.length > 0) {
+		const table = new Table({
+			head: ['Quest ID', 'Quest Name', 'Task Type', 'State'],
+			colWidths: [22, 35, 26, 16],
+			style: { border: ['gray'] },
+		});
+
+		allQuests.forEach((quest) => {
+			const details = getQuestData(quest);
+			const state = quest.isCompleted()
+				? 'Completed'
+				: quest.isExpired()
+					? 'Expired'
+					: 'Available';
+
+			table.push([
+				quest.id,
+				details.name,
+				getQuestTaskType(quest),
+				state,
+			]);
+		});
+
+		console.log(table.toString());
+	}
+
+	if (excludedQuests.length > 0) {
+		const excludedIds = excludedQuests
+			.map((quest) =>
+				quest.replacement_id
+					? `${quest.id} -> ${quest.replacement_id}`
+					: quest.id,
+			)
+			.filter(Boolean);
+		console.log(chalk.gray(`Excluded quest ids: ${excludedIds.join(', ')}`));
+	}
+}
+
 function renderScreen(user: UserInfo) {
 	console.clear();
 	console.log(
@@ -209,6 +263,11 @@ async function start() {
 	await client.fetchQuests();
 
 	const manager = client.questManager;
+	if (!manager) {
+		console.log(chalk.red('\u274c Quest manager was not initialized.'));
+		return;
+	}
+	printQuestFetchSummary(manager);
 	const validQuests = manager?.filterQuestsValid() ?? [];
 
 	if (validQuests.length === 0) {

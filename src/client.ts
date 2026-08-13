@@ -74,6 +74,7 @@ WebSocketShard.prototype.send = async function (payload: GatewaySendPayload) {
 
 export class ClientQuest extends Client {
 	public questManager: QuestManager | null = null;
+	public lastQuestsResponse: AllQuestsResponse | null = null;
 	public websocketManager: WebSocketManager;
 	constructor(token: string) {
 		const rest = new REST({ version: '10', makeRequest }).setToken(token);
@@ -104,9 +105,10 @@ export class ClientQuest extends Client {
 	}
 	fetchQuests() {
 		return this.rest.get('/quests/@me').then((response) => {
+			this.lastQuestsResponse = response as AllQuestsResponse;
 			this.questManager = QuestManager.fromResponse(
 				this,
-				response as AllQuestsResponse,
+				this.lastQuestsResponse,
 			);
 			return this.questManager;
 		});

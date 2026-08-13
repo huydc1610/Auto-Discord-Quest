@@ -134,12 +134,12 @@ export class QuestManager implements Iterable<Quest> {
 			'STREAM_ON_DESKTOP',
 			'PLAY_ACTIVITY',
 			'WATCH_VIDEO_ON_MOBILE',
+			'ACHIEVEMENT_IN_ACTIVITY',
 		].find(
 			(x) => taskConfig.tasks[x as QuestTaskConfigType] != null,
 		) as QuestTaskConfigType;
 		if (!taskName) {
-			console.log(`No supported task found for quest "${questName}"`);
-			return;
+			throw new Error(`No supported task found for quest "${questName}"`);
 		}
 		const secondsNeeded = taskConfig.tasks[taskName].target;
 		let secondsDone = quest.userStatus?.progress?.[taskName]?.value ?? 0;
@@ -229,22 +229,22 @@ export class QuestManager implements Iterable<Quest> {
 			quest.updateUserStatus(res as any);
 			console.log(`Quest "${questName}" completed!`);
 		} else if (taskName === 'STREAM_ON_DESKTOP') {
-			console.log(
-				'This no longer works in node for non-video quests. Use the discord desktop app to complete the',
-				questName,
-				'quest!',
+			throw new Error(
+				`STREAM_ON_DESKTOP no longer works in node for "${questName}". Use the Discord desktop app to complete this quest.`,
 			);
 		} else if (taskName === 'PLAY_ACTIVITY') {
-			console.log(
-				'This quest not supported. Use the discord desktop app to complete the',
-				questName,
-				'quest!',
+			throw new Error(
+				`PLAY_ACTIVITY is not supported in this node script for "${questName}". Use the Discord desktop app to complete this quest.`,
+			);
+		} else if (taskName === 'ACHIEVEMENT_IN_ACTIVITY') {
+			const task = taskConfig.tasks[taskName];
+			const taskTitle = task.messages?.task_title ?? taskName;
+			throw new Error(
+				`ACHIEVEMENT_IN_ACTIVITY is not supported for "${questName}" (${taskTitle}). This requires in-activity achievement progress, not the video-progress or heartbeat endpoints.`,
 			);
 		} else {
-			console.log(
-				'Unknown quest type. Use the discord desktop app to complete the',
-				questName,
-				'quest!',
+			throw new Error(
+				`Unknown quest type "${taskName}" for "${questName}". Use the Discord desktop app to complete this quest.`,
 			);
 		}
 	}

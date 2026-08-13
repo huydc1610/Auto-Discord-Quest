@@ -1,9 +1,12 @@
 export interface AllQuestsResponse {
 	quests: Quest[];
-	excluded_quests: Partial<Quest>[];
+	excluded_quests: ExcludedQuest[];
 	quest_enrollment_blocked_until: string | null;
 }
 export type Snowflake = string;
+export interface ExcludedQuest extends Partial<Quest> {
+	replacement_id?: Snowflake;
+}
 export interface Quest {
 	id: Snowflake;
 	config: QuestConfig;
@@ -78,6 +81,7 @@ export enum QuestTaskConfigType {
 	STREAM_ON_DESKTOP = 'STREAM_ON_DESKTOP',
 	PLAY_ACTIVITY = 'PLAY_ACTIVITY',
 	WATCH_VIDEO_ON_MOBILE = 'WATCH_VIDEO_ON_MOBILE',
+	ACHIEVEMENT_IN_ACTIVITY = 'ACHIEVEMENT_IN_ACTIVITY',
 }
 export interface QuestTaskConfig {
 	type: number;
@@ -87,11 +91,17 @@ export interface QuestTaskConfig {
 	developer_application_id?: Snowflake;
 }
 export interface QuestTask {
+	type?: QuestTaskConfigType | string;
 	event_name: string;
 	target: number;
+	applications?: { id: Snowflake }[];
 	external_ids?: string[];
 	title?: string;
 	description?: string;
+	messages?: {
+		task_title?: string;
+		task_description?: string;
+	};
 }
 export interface QuestRewardsConfig {
 	assignment_method: number;
