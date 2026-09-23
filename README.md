@@ -10,7 +10,7 @@ Auto quest discord
 
 1. **Clone or download the source code**:
    ```bash
-   git clone https://github.com/harukykun/Auto-Quest-Discord.git
+   git clone https://github.com/huydc1610/Auto-Quest-Discord.git
    cd Auto-Quest-Discord
    ```
 
@@ -56,7 +56,7 @@ Auto quest discord
 
 1. **Clone hoặc tải mã nguồn về máy**:
    ```bash
-   git clone https://github.com/harukykun/Auto-Quest-Discord.git
+   git clone https://github.com/huydc1610/Auto-Quest-Discord.git
    cd Auto-Quest-Discord
    ```
 
